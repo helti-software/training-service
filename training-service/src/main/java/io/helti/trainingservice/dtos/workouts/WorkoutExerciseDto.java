@@ -1,4 +1,6 @@
 package io.helti.trainingservice.dtos.workouts;
 
-public record WorkoutExerciseDto(Long exerciseId, String name) {
+import java.util.List;
+
+public record WorkoutExerciseDto(Long exerciseId, String name, List<WorkoutSetDto> sets) {
 }
