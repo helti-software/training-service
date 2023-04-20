@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @AllArgsConstructor
-public class StatsController {
+public class StatisticsController {
 	private final TrainingService trainingService;
 }
