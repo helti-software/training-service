@@ -70,17 +70,18 @@ public class TrainingService {
 		return template;
 	}
 
-	public Workout createWorkout(TemplateCreationDto template) {
+	public Workout createWorkout(Long templateId) {
+		Template template = templatesList.stream().filter(training -> training.getId().equals(templateId)).findFirst().orElse(null);
 		Workout workout = new Workout();
 		workout.setId(workoutId++);
 		workout.setName("Workout " + LocalDateTime.now());
 		List<WorkoutSet> sets = new ArrayList<>();
 		workout.setSets(new ArrayList<>());
-		for (TemplateSetsDto exerciseSet : template.exercisesSets()) {
-			for (int i = 1; i <= exerciseSet.sets(); i++) {
+		for (TemplateSet exerciseSet : template.getSetsPerExercise()) {
+			for (int i = 1; i <= exerciseSet.getSets(); i++) {
 				WorkoutSet workoutSet = new WorkoutSet();
 				workoutSet.setId(workoutSetId++);
-				workoutSet.setExerciseId(exerciseSet.exerciseId());
+				workoutSet.setExerciseId(exerciseSet.getExerciseId());
 				workoutSet.setSetNumber((byte) i);
 				workoutSet.setReps((byte) -1); // Load from previous workout if any
 				workoutSet.setWeight(-1.0f); // Load from previous workout if any

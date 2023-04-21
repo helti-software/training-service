@@ -32,9 +32,9 @@ public class WorkoutController {
 	}
 
 	@PostMapping("/workout")
-	public Workout createWorkout(TemplateCreationDto template) {
-		log.info("Creating workout: " + template);
-		Workout workout = trainingService.createWorkout(template);
+	public Workout createWorkout(@PathVariable Long templateId) {
+		log.info("Creating workout from template with ID: " + templateId);
+		Workout workout = trainingService.createWorkout(templateId);
 		log.info("Workout created: " + workout);
 		return workout;
 	}
