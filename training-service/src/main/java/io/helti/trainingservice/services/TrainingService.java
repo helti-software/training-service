@@ -18,8 +18,8 @@ import java.util.List;
 public class TrainingService {
 	private static Long exerciseId = 1L;
 	private static Long trainingId = 1L;
-	private static final Long workoutId = 1L;
-	private static final Long workoutSetId = 1L;
+	private static Long workoutId = 1L;
+	private static Long workoutSetId = 1L;
 	private static Long templateSetId = 1L;
 	private static final List<Workout> workoutsList = new ArrayList<>();
 	private static final List<Exercise> exerciseList = new ArrayList<>();
@@ -72,11 +72,22 @@ public class TrainingService {
 
 	public Workout createWorkout(TemplateCreationDto template) {
 		Workout workout = new Workout();
-		workout.setId(1L);
+		workout.setId(workoutId++);
 		workout.setName("Workout " + LocalDateTime.now());
 		List<WorkoutSet> sets = new ArrayList<>();
-
 		workout.setSets(new ArrayList<>());
+		for (TemplateSetsDto exerciseSet : template.exercisesSets()) {
+			for (int i = 1; i <= exerciseSet.sets(); i++) {
+				WorkoutSet workoutSet = new WorkoutSet();
+				workoutSet.setId(workoutSetId++);
+				workoutSet.setExerciseId(exerciseSet.exerciseId());
+				workoutSet.setSetNumber((byte) i);
+				workoutSet.setReps((byte) -1); // Load from previous workout if any
+				workoutSet.setWeight(-1.0f); // Load from previous workout if any
+				workoutSet.setCompleted(false);
+				sets.add(workoutSet);
+			}
+		}
 		workoutsList.add(workout);
 		return workout;
 	}
@@ -90,6 +101,11 @@ public class TrainingService {
 		workoutsList.stream().filter(w -> w.getId().equals(workoutId)).findFirst().orElse(null).setEndTime(LocalDateTime.now());
 		return workoutsList.stream().filter(w -> w.getId().equals(workoutId)).findFirst().orElse(null);
 
+	}
+
+	public WorkoutSet completeWorkoutSetById(Long workoutSetId) {
+		workoutsList.stream().flatMap(workout -> workout.getSets().stream()).filter(workoutSet -> workoutSet.getId().equals(workoutSetId)).findFirst().orElse(null).setCompleted(true);
+		return workoutsList.stream().flatMap(workout -> workout.getSets().stream()).filter(workoutSet -> workoutSet.getId().equals(workoutSetId)).findFirst().orElse(null);
 	}
 
 	public WorkoutSet updateWorkoutSet(WorkoutSet workoutSet) {

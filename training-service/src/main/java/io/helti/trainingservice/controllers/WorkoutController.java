@@ -2,6 +2,7 @@ package io.helti.trainingservice.controllers;
 
 import io.helti.trainingservice.dtos.templates.TemplateCreationDto;
 import io.helti.trainingservice.entities.workouts.Workout;
+import io.helti.trainingservice.entities.workouts.WorkoutSet;
 import io.helti.trainingservice.services.TrainingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +33,10 @@ public class WorkoutController {
 
 	@PostMapping("/workout")
 	public Workout createWorkout(TemplateCreationDto template) {
-		return trainingService.createWorkout(template);
+		log.info("Creating workout: " + template);
+		Workout workout = trainingService.createWorkout(template);
+		log.info("Workout created: " + workout);
+		return workout;
 	}
 
 	@PutMapping("/workouts/{id}/start")
@@ -49,5 +53,13 @@ public class WorkoutController {
 		Workout workout = trainingService.endWorkout(id);
 		log.info("Workout finished: " + (workout.getEndTime() != null));
 		return workout;
+	}
+
+	@PutMapping("/set/{setId}/complete")
+	public WorkoutSet completeSet(@PathVariable Long setId) {
+		log.info("Completing set with id: " + setId);
+		WorkoutSet set = trainingService.completeWorkoutSetById(setId);
+		log.info("Set completed: " + (set.isCompleted()));
+		return set;
 	}
 }
